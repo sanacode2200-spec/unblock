@@ -22,11 +22,30 @@ function sleep(ms: number) {
   return new Promise((resolve) => workerScope.setTimeout(resolve, ms));
 }
 
-function chooseStatus(fileName: string, progress: number) {
+function chooseStatus(file: WorkerRequest["files"][number], progress: number) {
   if (progress < 12) return "Analyzing";
-  if (/\.(mov|m4v)$/i.test(fileName) && progress < 42) return "Rewrapping";
+  if (file.plan.actions.includes("rewrap") && progress < 42) return "Rewrapping";
   if (progress < 100) return "Converting";
   return "Done";
+}
+
+function progressStepDelay(file: WorkerRequest["files"][number], fileIndex: number) {
+  const actionCost = file.plan.actions.reduce((total, action) => {
+    if (action === "rewrap") return total + 26;
+    if (action === "compress") return total + 56;
+    if (action === "tone-map-sdr") return total + 64;
+    return total + 48;
+  }, 70);
+
+  return actionCost + fileIndex * 24;
+}
+
+function progressMessage(file: WorkerRequest["files"][number], progress: number) {
+  if (progress < 12) return "Checking the video";
+  if (file.plan.actions.includes("rewrap") && progress < 42) return "Copying into MP4";
+  if (file.plan.actions.includes("tone-map-sdr") && progress < 70) return "Fixing colors for Windows";
+  if (file.plan.actions.includes("compress") && progress < 92) return "Making the file smaller";
+  return progress < 100 ? "Creating Windows-friendly MP4" : "Ready";
 }
 
 post({
@@ -43,14 +62,14 @@ workerScope.addEventListener("message", async (event: MessageEvent<WorkerRequest
       post({ type: "progress", id: file.id, progress: 0, status: "Queued" });
 
       for (let progress = 8; progress <= 100; progress += 8) {
-        await sleep(120 + index * 24);
+        await sleep(progressStepDelay(file, index));
         const normalized = Math.min(progress, 100);
         post({
           type: "progress",
           id: file.id,
           progress: normalized,
-          status: chooseStatus(file.name, normalized),
-          message: normalized < 100 ? "Creating Windows-friendly MP4" : "Ready"
+          status: chooseStatus(file, normalized),
+          message: progressMessage(file, normalized)
         });
       }
     }

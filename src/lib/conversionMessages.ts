@@ -11,17 +11,28 @@ export type QueueFile = {
   size: number;
   type: string;
   issues: ConversionIssue[];
+  plan: ConversionPlan;
   progress: number;
   status: "Ready" | "Queued" | "Analyzing" | "Rewrapping" | "Converting" | "Done" | "Error";
 };
 
 export type ConversionPreset = "windows-mp4" | "powerpoint" | "editor-safe" | "smaller-file";
 
+export type ConversionAction = "rewrap" | "transcode-h264" | "tone-map-sdr" | "compress";
+
+export type ConversionPlan = {
+  preset: ConversionPreset;
+  actions: ConversionAction[];
+  outputLabel: string;
+  userLabel: string;
+  estimatedRatio: number;
+};
+
 export type WorkerRequest =
   | {
       type: "convert";
       preset: ConversionPreset;
-      files: Array<Pick<QueueFile, "id" | "name" | "size" | "type" | "issues">>;
+      files: Array<Pick<QueueFile, "id" | "name" | "size" | "type" | "issues" | "plan">>;
     };
 
 export type WorkerResponse =

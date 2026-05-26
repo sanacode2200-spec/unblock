@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { buildConversionPlan, presetLabel } from "../lib/conversionPlan";
 import type { ConversionIssue, ConversionPreset, QueueFile, WorkerResponse } from "../lib/conversionMessages";
 
 function formatSize(bytes: number) {
@@ -29,6 +30,8 @@ function outputName(name: string) {
   return name.replace(/\.[^.]+$/, "") + "_unblock.mp4";
 }
 
+const presets: ConversionPreset[] = ["windows-mp4", "powerpoint", "editor-safe", "smaller-file"];
+
 export default function Converter() {
   const inputRef = useRef<HTMLInputElement>(null);
   const workerRef = useRef<Worker | null>(null);
@@ -37,7 +40,7 @@ export default function Converter() {
   const [title, setTitle] = useState("Ready to convert");
   const [summary, setSummary] = useState("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
   const [running, setRunning] = useState(false);
-  const [preset] = useState<ConversionPreset>("windows-mp4");
+  const [preset, setPreset] = useState<ConversionPreset>("windows-mp4");
   const [workerReady, setWorkerReady] = useState(false);
 
   const hasFiles = files.length > 0;
@@ -90,6 +93,24 @@ export default function Converter() {
     return worker;
   }
 
+  function applyPreset(nextPreset: ConversionPreset) {
+    setPreset(nextPreset);
+    setFiles((current) => current.map((file) => ({
+      ...file,
+      plan: buildConversionPlan({
+        name: file.name,
+        size: file.size,
+        issues: file.issues,
+        preset: nextPreset
+      }),
+      progress: 0,
+      status: "Ready"
+    })));
+    setTitle("Ready to convert");
+    setSummary(`Unblock selected ${presetLabel(nextPreset)} automatically.`);
+    setRunning(false);
+  }
+
   function addFiles(list: FileList | null) {
     const videos = Array.from(list ?? []).filter((file) => (
       file.type.startsWith("video/") || /\.(mov|mp4|m4v)$/i.test(file.name)
@@ -97,15 +118,24 @@ export default function Converter() {
     if (!videos.length) return;
 
     ensureWorker();
-    setFiles(videos.map((file) => ({
-      id: `${file.name}-${file.size}-${file.lastModified}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      issues: guessIssues(file),
-      progress: 0,
-      status: "Ready"
-    })));
+    setFiles(videos.map((file) => {
+      const issues = guessIssues(file);
+      return {
+        id: `${file.name}-${file.size}-${file.lastModified}`,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        issues,
+        plan: buildConversionPlan({
+          name: file.name,
+          size: file.size,
+          issues,
+          preset
+        }),
+        progress: 0,
+        status: "Ready"
+      };
+    }));
     setTitle("Ready to convert");
     setSummary("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
     setRunning(false);
@@ -124,7 +154,7 @@ export default function Converter() {
     worker.postMessage({
       type: "convert",
       preset,
-      files: files.map(({ id, name, size, type, issues }) => ({ id, name, size, type, issues }))
+      files: files.map(({ id, name, size, type, issues, plan }) => ({ id, name, size, type, issues, plan }))
     });
   }
 
@@ -184,10 +214,17 @@ export default function Converter() {
       </div>
 
       <div className="presets" aria-label="Output presets">
-        <span className="preset active">Windows MP4</span>
-        <span className="preset">PowerPoint</span>
-        <span className="preset">Premiere Pro</span>
-        <span className="preset">Smaller file</span>
+        {presets.map((presetOption) => (
+          <button
+            className={`preset${presetOption === preset ? " active" : ""}`}
+            key={presetOption}
+            type="button"
+            aria-pressed={presetOption === preset}
+            onClick={() => applyPreset(presetOption)}
+          >
+            {presetLabel(presetOption)}
+          </button>
+        ))}
       </div>
 
       {hasFiles && (
@@ -209,8 +246,9 @@ export default function Converter() {
                   <div className="file-name">{file.name}</div>
                   <div className="file-meta">
                     <span className="meta-chip">Detected: {file.issues.join(" + ")}</span>
-                    <span className="meta-chip">Output: MP4 · H.264 · SDR</span>
-                    <span className="meta-chip">Estimated: {formatSize(Math.round(file.size * 0.72))}</span>
+                    <span className="meta-chip">Plan: {file.plan.userLabel}</span>
+                    <span className="meta-chip">Output: {file.plan.outputLabel}</span>
+                    <span className="meta-chip">Estimated: {formatSize(Math.round(file.size * file.plan.estimatedRatio))}</span>
                     <span className="meta-chip">Saves as: {outputName(file.name)}</span>
                   </div>
                 </div>
