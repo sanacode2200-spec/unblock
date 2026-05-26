@@ -1,12 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-
-type QueueFile = {
-  name: string;
-  size: number;
-  issues: string[];
-  progress: number;
-  status: "Ready" | "Queued" | "Converting" | "Done";
-};
+import type { ConversionIssue, ConversionPreset, QueueFile, WorkerResponse } from "../lib/conversionMessages";
 
 function formatSize(bytes: number) {
   if (!bytes) return "Size unknown";
@@ -20,9 +13,9 @@ function formatSize(bytes: number) {
   return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
 }
 
-function guessIssues(file: File) {
+function guessIssues(file: File): ConversionIssue[] {
   const name = file.name.toLowerCase();
-  const issues = [];
+  const issues: ConversionIssue[] = [];
   if (name.endsWith(".mov")) issues.push("iPhone video format");
   if (name.includes("hevc") || name.includes("h265") || name.endsWith(".mov")) {
     issues.push("May not open on Windows");
@@ -38,12 +31,14 @@ function outputName(name: string) {
 
 export default function Converter() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const timerRef = useRef<number | null>(null);
+  const workerRef = useRef<Worker | null>(null);
   const [dragging, setDragging] = useState(false);
   const [files, setFiles] = useState<QueueFile[]>([]);
   const [title, setTitle] = useState("Ready to convert");
   const [summary, setSummary] = useState("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
   const [running, setRunning] = useState(false);
+  const [preset] = useState<ConversionPreset>("windows-mp4");
+  const [workerReady, setWorkerReady] = useState(false);
 
   const hasFiles = files.length > 0;
   const buttonText = useMemo(() => {
@@ -52,16 +47,61 @@ export default function Converter() {
     return "Convert to MP4";
   }, [files, hasFiles, running]);
 
+  function ensureWorker() {
+    if (workerRef.current) return workerRef.current;
+
+    const worker = new Worker(new URL("../workers/conversion.worker.ts", import.meta.url), {
+      type: "module"
+    });
+
+    worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
+      const message = event.data;
+      if (message.type === "capabilities") {
+        setWorkerReady(true);
+        return;
+      }
+      if (message.type === "progress") {
+        setFiles((current) => current.map((file) => (
+          file.id === message.id
+            ? { ...file, progress: message.progress, status: message.status }
+            : file
+        )));
+        return;
+      }
+      if (message.type === "complete") {
+        setRunning(false);
+        setTitle("Your MP4 is ready");
+        setSummary("The original video stays untouched. Download output will connect to the ffmpeg.wasm result next.");
+        return;
+      }
+      if (message.type === "error") {
+        setRunning(false);
+        setTitle("This video could not be converted.");
+        setSummary(message.message);
+        if (message.id) {
+          setFiles((current) => current.map((file) => (
+            file.id === message.id ? { ...file, status: "Error" } : file
+          )));
+        }
+      }
+    });
+
+    workerRef.current = worker;
+    return worker;
+  }
+
   function addFiles(list: FileList | null) {
     const videos = Array.from(list ?? []).filter((file) => (
       file.type.startsWith("video/") || /\.(mov|mp4|m4v)$/i.test(file.name)
     ));
     if (!videos.length) return;
 
-    if (timerRef.current) window.clearInterval(timerRef.current);
+    ensureWorker();
     setFiles(videos.map((file) => ({
+      id: `${file.name}-${file.size}-${file.lastModified}`,
       name: file.name,
       size: file.size,
+      type: file.type,
       issues: guessIssues(file),
       progress: 0,
       status: "Ready"
@@ -71,36 +111,21 @@ export default function Converter() {
     setRunning(false);
   }
 
-  function simulateConversion() {
+  function startConversion() {
     if (!hasFiles || running) return;
 
-    let progress = 0;
+    const worker = ensureWorker();
     setRunning(true);
     setTitle("Creating Windows-friendly MP4...");
-    setSummary("Fast mode is selected when a safe rewrap is enough; otherwise Unblock converts to H.264.");
+    setSummary(workerReady
+      ? "Fast mode is selected when a safe rewrap is enough; otherwise Unblock converts to H.264."
+      : "Starting the local conversion worker.");
     setFiles((current) => current.map((file) => ({ ...file, progress: 0, status: "Queued" })));
-
-    timerRef.current = window.setInterval(() => {
-      progress = Math.min(progress + 8, 100);
-      setFiles((current) => {
-        const next = current.map((file, index) => {
-          const localProgress = Math.max(0, Math.min(progress - index * 12, 100));
-          return {
-            ...file,
-            progress: localProgress,
-            status: localProgress === 0 ? "Queued" : localProgress < 100 ? "Converting" : "Done"
-          } satisfies QueueFile;
-        });
-        if (next.every((file) => file.progress === 100)) {
-          if (timerRef.current) window.clearInterval(timerRef.current);
-          timerRef.current = null;
-          setRunning(false);
-          setTitle("Your MP4 is ready");
-          setSummary("The original video stays untouched. The desktop app will open the output folder after conversion.");
-        }
-        return next;
-      });
-    }, 220);
+    worker.postMessage({
+      type: "convert",
+      preset,
+      files: files.map(({ id, name, size, type, issues }) => ({ id, name, size, type, issues }))
+    });
   }
 
   return (
@@ -172,7 +197,7 @@ export default function Converter() {
               <strong>{title}</strong>
               <span>{summary}</span>
             </div>
-            <button className="button primary" type="button" disabled={running} onClick={simulateConversion}>
+            <button className="button primary" type="button" disabled={running} onClick={startConversion}>
               {buttonText}
             </button>
           </div>
@@ -189,7 +214,7 @@ export default function Converter() {
                     <span className="meta-chip">Saves as: {outputName(file.name)}</span>
                   </div>
                 </div>
-                <div className={`ready${file.status === "Converting" || file.status === "Queued" ? " converting" : ""}${file.status === "Done" ? " done" : ""}`} role="status">
+                <div className={`ready${["Queued", "Analyzing", "Rewrapping", "Converting"].includes(file.status) ? " converting" : ""}${file.status === "Done" ? " done" : ""}`} role="status">
                   {file.status}
                 </div>
                 <div
