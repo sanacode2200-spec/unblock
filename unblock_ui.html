@@ -3,7 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unblock by sanacode</title>
+  <meta name="description" content="Convert iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files. Unblock fixes codec problems automatically and keeps your original files safe." />
+  <link rel="canonical" href="https://sanacode.com/unblock/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Convert iPhone Videos to MP4 on Windows | Unblock" />
+  <meta property="og:description" content="Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files without confusing codec settings." />
+  <meta property="og:site_name" content="Unblock by sanacode" />
+  <meta property="og:url" content="https://sanacode.com/unblock/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Convert iPhone Videos to MP4 on Windows | Unblock" />
+  <meta name="twitter:description" content="Drop iPhone videos. Get Windows-friendly MP4 files." />
+  <title>Convert iPhone Videos to MP4 on Windows | Unblock</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Unblock",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Windows 10, Windows 11",
+      "description": "Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "sanacode"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why won't my iPhone video play on Windows?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It may use MOV, HEVC, HDR, or another format that the Windows app does not support by default. Unblock converts it to a Windows-friendly MP4."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I convert iPhone MOV to MP4 on Windows?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Drop the MOV file into Unblock. It detects the video and creates an MP4 output automatically."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Unblock convert HEVC to H.264?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The default Windows MP4 output uses H.264 video and AAC audio for broad compatibility."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Unblock upload my videos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The product direction is local processing on your computer, which is better for private videos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Unblock keep the original file?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The original file is left untouched and the Windows-friendly MP4 is written as a new file."
+          }
+        }
+      ]
+    }
+  </script>
   <style>
     :root {
       --bg: #03050b;
@@ -12,16 +89,20 @@
       --line: rgba(255, 255, 255, 0.09);
       --line-strong: rgba(255, 255, 255, 0.16);
       --text: #f7f7fb;
-      --muted: #8c91a6;
-      --muted-2: #5e6377;
+      --muted: #9aa1b7;
+      --muted-2: #667085;
       --violet: #8b5cf6;
       --blue: #3b82f6;
       --cyan: #38bdf8;
       --green: #22c55e;
-      --radius: 30px;
+      --amber: #f59e0b;
+      --rose: #fb7185;
+      --radius: 28px;
     }
 
     * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -30,7 +111,7 @@
       color: var(--text);
       background:
         radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.34), transparent 30%),
-        radial-gradient(circle at 86% 78%, rgba(14, 165, 233, 0.28), transparent 30%),
+        radial-gradient(circle at 86% 78%, rgba(14, 165, 233, 0.25), transparent 31%),
         linear-gradient(180deg, #03050b 0%, #050713 54%, #02030a 100%);
       overflow-x: hidden;
     }
@@ -47,6 +128,26 @@
       mask-image: radial-gradient(circle at 50% 30%, black, transparent 72%);
     }
 
+    a { color: inherit; text-decoration: none; }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.56;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    label:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(56,189,248,0.82);
+      outline-offset: 4px;
+    }
+
     .page {
       position: relative;
       width: min(1120px, calc(100% - 36px));
@@ -58,7 +159,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 86px;
+      gap: 18px;
+      margin-bottom: 76px;
     }
 
     .brand {
@@ -66,7 +168,8 @@
       align-items: center;
       gap: 12px;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .logo {
@@ -89,10 +192,12 @@
 
     nav {
       display: flex;
-      gap: 34px;
+      gap: 30px;
       color: var(--muted);
       font-size: 13px;
     }
+
+    nav a:hover { color: #fff; }
 
     .status {
       display: flex;
@@ -105,6 +210,7 @@
       padding: 9px 13px;
       font-size: 12px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      white-space: nowrap;
     }
 
     .status-dot {
@@ -115,7 +221,10 @@
       box-shadow: 0 0 14px rgba(34,197,94,0.9);
     }
 
-    .hero { text-align: center; }
+    .hero {
+      text-align: center;
+      padding-bottom: 34px;
+    }
 
     .tag {
       display: inline-flex;
@@ -142,11 +251,11 @@
     }
 
     h1 {
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
-      font-size: clamp(54px, 8vw, 88px);
+      font-size: clamp(50px, 8vw, 88px);
       line-height: 0.94;
-      letter-spacing: -0.085em;
+      letter-spacing: 0;
       font-weight: 900;
       position: relative;
     }
@@ -167,19 +276,54 @@
     .grad {
       background: linear-gradient(90deg, #ffffff 0%, #c4b5fd 46%, #60a5fa 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
     }
 
     .subtitle {
-      max-width: 590px;
-      margin: 24px auto 32px;
-      color: #9ca3af;
+      max-width: 650px;
+      margin: 24px auto 26px;
+      color: #a8afc1;
       font-size: 17px;
       line-height: 1.65;
     }
 
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 44px;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 850;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--violet), var(--blue));
+      box-shadow: 0 12px 32px rgba(124,58,237,0.3);
+    }
+
+    .button.secondary {
+      color: #e5e7eb;
+      background: rgba(255,255,255,0.045);
+      border-color: var(--line);
+    }
+
     .drop-card {
-      width: min(760px, 100%);
+      width: min(800px, 100%);
       margin: 0 auto;
       padding: 2px;
       border-radius: var(--radius);
@@ -192,7 +336,7 @@
     }
 
     .drop {
-      min-height: 260px;
+      min-height: 292px;
       border-radius: calc(var(--radius) - 2px);
       background:
         radial-gradient(circle at 50% 0%, rgba(139,92,246,0.14), transparent 44%),
@@ -202,6 +346,14 @@
       place-items: center;
       padding: 34px;
       border: 1px solid rgba(255,255,255,0.035);
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .drop.dragging {
+      border-color: rgba(56,189,248,0.7);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(56,189,248,0.18), transparent 44%),
+        rgba(8, 10, 20, 0.95);
     }
 
     .drop-inner { text-align: center; }
@@ -225,7 +377,7 @@
     .drop h2 {
       margin: 0 0 10px;
       font-size: 23px;
-      letter-spacing: -0.045em;
+      letter-spacing: 0;
     }
 
     .drop p {
@@ -235,21 +387,16 @@
       font-weight: 650;
     }
 
-    .choose {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 0;
-      color: #fff;
-      background: linear-gradient(135deg, var(--violet), var(--blue));
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 13px;
-      font-weight: 850;
-      box-shadow: 0 12px 32px rgba(124,58,237,0.3);
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .presets {
+    .presets,
+    .trust-pills {
       margin: 24px auto 0;
       display: flex;
       justify-content: center;
@@ -259,17 +406,188 @@
       font-size: 12px;
     }
 
-    .preset {
+    .trust-pills { margin-top: 18px; }
+
+    .preset,
+    .trust-pill {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.035);
       border-radius: 999px;
       padding: 9px 13px;
     }
 
-    .preset.active {
+    .preset.active,
+    .trust-pill.strong {
       color: #ddd6fe;
       border-color: rgba(139,92,246,0.42);
       background: rgba(139,92,246,0.16);
+    }
+
+    .converter {
+      margin: 34px auto 0;
+      width: min(900px, 100%);
+      text-align: left;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.035);
+      border-radius: 22px;
+      padding: 16px;
+      display: none;
+    }
+
+    .converter.visible { display: block; }
+
+    .converter-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      padding: 4px 4px 16px;
+    }
+
+    .converter-head strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .converter-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .file-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .file-row {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(3,5,11,0.42);
+    }
+
+    .thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      background:
+        linear-gradient(135deg, rgba(139,92,246,0.75), rgba(56,189,248,0.55)),
+        #111827;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: white;
+    }
+
+    .file-main {
+      min-width: 0;
+    }
+
+    .file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .file-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .meta-chip {
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 5px 8px;
+    }
+
+    .ready {
+      color: #bbf7d0;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .ready.converting {
+      color: #bfdbfe;
+      background: rgba(59,130,246,0.12);
+      border-color: rgba(59,130,246,0.28);
+    }
+
+    .ready.done {
+      color: #dcfce7;
+      background: rgba(34,197,94,0.16);
+      border-color: rgba(34,197,94,0.34);
+    }
+
+    .progress {
+      grid-column: 2 / 4;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--violet), var(--cyan));
+      transition: width 240ms ease;
+    }
+
+    .converter-note {
+      margin: 12px 4px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .section {
+      padding: 76px 0 0;
+    }
+
+    .section-head {
+      max-width: 690px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4.4vw, 48px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 16px 0 0;
     }
 
     .steps-label {
@@ -281,21 +599,29 @@
       text-align: center;
     }
 
-    .steps {
+    .steps,
+    .cards,
+    .use-cases {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 18px;
     }
 
-    .step {
+    .step,
+    .card,
+    .faq details {
       background: rgba(255,255,255,0.035);
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 22px;
       padding: 22px;
+    }
+
+    .step {
       min-height: 150px;
     }
 
-    .step-num {
+    .step-num,
+    .card-icon {
       width: 30px;
       height: 30px;
       display: grid;
@@ -307,51 +633,279 @@
       margin-bottom: 18px;
     }
 
-    .step strong {
-      display: block;
-      margin-bottom: 8px;
-      letter-spacing: -0.03em;
+    .card-icon {
+      background: rgba(56,189,248,0.12);
+      color: #bae6fd;
     }
 
-    .step span {
+    .step strong,
+    .card strong {
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: 0;
+    }
+
+    .step span,
+    .card span {
       color: var(--muted);
       font-size: 13px;
       line-height: 1.55;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .problem-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .problem-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      color: #d7dce8;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .problem-item b {
+      color: #fff;
+    }
+
+    .bullet {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      margin-top: 6px;
+      border-radius: 99px;
+      background: var(--amber);
+      box-shadow: 0 0 18px rgba(245,158,11,0.45);
+    }
+
+    .app-preview {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(4, 7, 17, 0.82);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.34);
+    }
+
+    .app-bar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .app-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .app-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.22);
+    }
+
+    .app-body {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .mini-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(251,113,133,0.72), rgba(59,130,246,0.64));
+    }
+
+    .mini-title {
+      height: 9px;
+      width: 72%;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.42);
+      margin-bottom: 8px;
+    }
+
+    .mini-sub {
+      height: 8px;
+      width: 92%;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.13);
+    }
+
+    .mini-status {
+      color: #bbf7d0;
+      font-size: 11px;
+      font-weight: 850;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,0.25);
+      background: rgba(34,197,94,0.12);
+      padding: 7px 9px;
+    }
+
+    .compare {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--line);
+    }
+
+    .compare-row:first-child {
+      border-top: 0;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-weight: 850;
+    }
+
+    .compare-cell {
+      padding: 16px 18px;
+      color: #d9deea;
+      font-size: 14px;
+      border-left: 1px solid var(--line);
+    }
+
+    .compare-cell:first-child {
+      border-left: 0;
+      color: var(--muted);
+    }
+
+    .faq {
+      display: grid;
+      gap: 10px;
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 850;
+      color: #fff;
+    }
+
+    .faq p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .download-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .download-panel strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .download-panel span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
     }
 
     footer {
       margin-top: 60px;
       display: flex;
       justify-content: space-between;
+      gap: 18px;
       color: var(--muted-2);
       font-size: 12px;
       border-top: 1px solid var(--line);
       padding-top: 22px;
     }
 
-    @media (max-width: 780px) {
+    @media (max-width: 860px) {
       header { margin-bottom: 54px; }
       nav { display: none; }
       .status { display: none; }
-      .steps { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 10px; }
+      .steps,
+      .cards,
+      .use-cases,
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+      .converter-head,
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .download-panel {
+        grid-template-columns: 1fr;
+      }
+      .file-row {
+        grid-template-columns: 42px minmax(0, 1fr);
+      }
+      .ready {
+        grid-column: 2;
+        justify-self: start;
+      }
+      .progress { grid-column: 1 / 3; }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100% - 24px, 1120px); }
+      .drop { padding: 24px 16px; }
+      .compare-cell { padding: 14px 12px; font-size: 13px; }
+      h1 { font-size: 46px; }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <header>
-      <div class="brand">
+      <a class="brand" href="#top" aria-label="Unblock by sanacode home">
         <div class="logo">U</div>
         <span>Unblock</span>
         <span class="version">v1.0</span>
-      </div>
+      </a>
 
-      <nav>
-        <span>How it works</span>
-        <span>Features</span>
-        <span>Pricing</span>
-        <span>Changelog</span>
+      <nav aria-label="Primary navigation">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#apps">Apps</a>
+        <a href="#faq">FAQ</a>
       </nav>
 
       <div class="status">
@@ -360,34 +914,61 @@
       </div>
     </header>
 
-    <main class="hero">
+    <main id="top" class="hero">
       <div class="tag"><small>New</small> iPhone video compatibility</div>
       <h1>Drop videos. <span class="grad">Get MP4.</span></h1>
       <p class="subtitle">
-        Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files — without opening a single setting.
+        Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files - without opening a single setting.
       </p>
 
-      <section class="drop-card">
-        <div class="drop">
+      <div class="hero-actions">
+        <label class="button primary" for="fileInput">Choose a file</label>
+        <a class="button secondary" href="#download">Download for Windows</a>
+      </div>
+
+      <section class="drop-card" aria-label="Video upload">
+        <div id="dropZone" class="drop">
           <div class="drop-inner">
-            <div class="upload">↥</div>
+            <div class="upload" aria-hidden="true">↑</div>
             <h2>Drop iPhone videos here</h2>
             <p>MOV · HEVC · HDR · 4K · local processing</p>
-            <button class="choose">Choose a file</button>
+            <label class="button primary" for="fileInput">Choose a file</label>
+            <input id="fileInput" class="file-input" type="file" accept="video/*,.mov,.mp4,.m4v" multiple />
           </div>
         </div>
       </section>
 
-      <div class="presets">
+      <div class="trust-pills" aria-label="Compatibility promises">
+        <span class="trust-pill strong">MOV → MP4</span>
+        <span class="trust-pill">HEVC → H.264</span>
+        <span class="trust-pill">HDR → SDR</span>
+        <span class="trust-pill">4K supported</span>
+        <span class="trust-pill">Local processing</span>
+        <span class="trust-pill">Windows 10 / 11</span>
+      </div>
+
+      <div class="presets" aria-label="Output presets">
         <span class="preset active">Windows MP4</span>
         <span class="preset">PowerPoint</span>
         <span class="preset">Premiere Pro</span>
         <span class="preset">Smaller file</span>
       </div>
+
+      <section id="converter" class="converter" aria-live="polite">
+        <div class="converter-head">
+          <div>
+            <strong id="converterTitle">Ready to convert</strong>
+            <span id="converterSummary">Unblock selected MP4 · H.264 · AAC · SDR automatically.</span>
+          </div>
+          <button id="convertButton" class="button primary" type="button" disabled>Convert to MP4</button>
+        </div>
+        <div id="fileList" class="file-list"></div>
+        <p class="converter-note">Prototype mode: this page previews the queue, plain-language analysis, and progress states. The desktop build will connect these states to FFmpeg.</p>
+      </section>
     </main>
 
-    <div class="steps-label">Why it feels simple</div>
-    <section class="steps">
+    <div id="how" class="steps-label">Why it feels simple</div>
+    <section class="steps" aria-label="How Unblock works">
       <div class="step">
         <div class="step-num">1</div>
         <strong>Add iPhone videos</strong>
@@ -405,10 +986,290 @@
       </div>
     </section>
 
+    <section class="section problem-grid">
+      <div class="section-head">
+        <div class="eyebrow">Plain English Fix</div>
+        <h2>Why iPhone videos break on Windows</h2>
+        <p class="section-copy">
+          iPhone videos can be perfectly fine and still fail on a PC. The problem is usually the format Windows apps expect, not the video itself.
+        </p>
+      </div>
+
+      <div class="problem-list">
+        <div class="problem-item"><span class="bullet"></span><span><b>MOV files</b> are common on iPhone, but many Windows workflows expect MP4.</span></div>
+        <div class="problem-item"><span class="bullet"></span><span><b>HEVC / H.265</b> can trigger missing codec errors on Windows.</span></div>
+        <div class="problem-item"><span class="bullet"></span><span><b>HDR video</b> may look washed out or too bright on normal displays.</span></div>
+        <div class="problem-item"><span class="bullet"></span><span><b>Large 4K files</b> can be slow to send, upload, or import into editors.</span></div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-head">
+        <div class="eyebrow">Automatic Compatibility</div>
+        <h2>Unblock fixes the compatibility automatically</h2>
+        <p class="section-copy">No codec hunting, no export menus, and no risk of overwriting the original file.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-icon">1</div><strong>Converts MOV to MP4</strong><span>Turns iPhone video files into the container Windows apps expect.</span></div>
+        <div class="card"><div class="card-icon">2</div><strong>Changes HEVC to H.264</strong><span>Creates a video stream that opens reliably on Windows 10 and 11.</span></div>
+        <div class="card"><div class="card-icon">3</div><strong>Fixes HDR for normal displays</strong><span>Outputs SDR MP4 files so colors look natural in everyday apps.</span></div>
+        <div class="card"><div class="card-icon">4</div><strong>Optimizes file size</strong><span>Keeps the file practical for sharing without making settings your problem.</span></div>
+        <div class="card"><div class="card-icon">5</div><strong>Keeps the original untouched</strong><span>Your source video stays exactly where it is, unchanged.</span></div>
+        <div class="card"><div class="card-icon">6</div><strong>Works locally on your computer</strong><span>Private videos do not need to be uploaded to a cloud converter.</span></div>
+      </div>
+    </section>
+
+    <section id="apps" class="section problem-grid">
+      <div>
+        <div class="section-head">
+          <div class="eyebrow">Windows Apps</div>
+          <h2>Made for the Windows apps people actually use</h2>
+          <p class="section-copy">
+            Export files for Windows Media Player, Photos, PowerPoint, Premiere Pro, DaVinci Resolve, Google Drive, email, Discord, Slack, Teams, USB drives, and external storage.
+          </p>
+        </div>
+        <div class="trust-pills" style="justify-content:flex-start;margin-left:0">
+          <span class="trust-pill strong">Media Player</span>
+          <span class="trust-pill">Photos</span>
+          <span class="trust-pill">PowerPoint</span>
+          <span class="trust-pill">Premiere Pro</span>
+          <span class="trust-pill">DaVinci Resolve</span>
+          <span class="trust-pill">Drive / email</span>
+        </div>
+      </div>
+
+      <div class="app-preview" aria-label="Converter app preview">
+        <div class="app-bar">
+          <div class="app-dots"><span></span><span></span><span></span></div>
+          <span>Unblock by sanacode</span>
+        </div>
+        <div class="app-body">
+          <div class="mini-row">
+            <div class="mini-thumb"></div>
+            <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+            <div class="mini-status">Ready</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-thumb"></div>
+            <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+            <div class="mini-status">HDR → SDR</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-thumb"></div>
+            <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+            <div class="mini-status">MP4</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">The old way vs Unblock</div>
+        <h2>No codec hunting. No confusing export menus.</h2>
+      </div>
+
+      <div class="compare" role="table" aria-label="Comparison between old workflow and Unblock">
+        <div class="compare-row" role="row"><div class="compare-cell" role="columnheader">Old way</div><div class="compare-cell" role="columnheader">Unblock</div></div>
+        <div class="compare-row" role="row"><div class="compare-cell">Search for missing codecs</div><div class="compare-cell">Drop video</div></div>
+        <div class="compare-row" role="row"><div class="compare-cell">Learn MOV vs MP4</div><div class="compare-cell">Auto-detect</div></div>
+        <div class="compare-row" role="row"><div class="compare-cell">Choose bitrate and codec</div><div class="compare-cell">Best settings selected</div></div>
+        <div class="compare-row" role="row"><div class="compare-cell">Risk overwriting files</div><div class="compare-cell">Original stays untouched</div></div>
+        <div class="compare-row" role="row"><div class="compare-cell">Upload private videos online</div><div class="compare-cell">Process locally</div></div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="section-head">
+        <div class="eyebrow">FAQ</div>
+        <h2>iPhone video compatibility questions</h2>
+      </div>
+
+      <div class="faq">
+        <details><summary>Why won't my iPhone video play on Windows?</summary><p>It may use MOV, HEVC, HDR, or another format that the Windows app does not support by default. Unblock converts it to a Windows-friendly MP4.</p></details>
+        <details><summary>How do I convert iPhone MOV to MP4 on Windows?</summary><p>Drop the MOV file into Unblock. It detects the video and creates an MP4 output automatically.</p></details>
+        <details><summary>What is HEVC and why does Windows complain about it?</summary><p>HEVC is an efficient video codec used by newer iPhones. Some Windows installs need extra codec support to play it, so Unblock changes it to H.264.</p></details>
+        <details><summary>Can Unblock convert HEVC to H.264?</summary><p>Yes. The default Windows MP4 output uses H.264 video and AAC audio for broad compatibility.</p></details>
+        <details><summary>Why does my iPhone HDR video look washed out on Windows?</summary><p>HDR video can display incorrectly on SDR screens or apps. Unblock can make an SDR MP4 so the result looks normal.</p></details>
+        <details><summary>Does Unblock keep my original video?</summary><p>Yes. The original file is left untouched and the Windows-friendly MP4 is written as a new file.</p></details>
+        <details><summary>Does Unblock upload my video to the cloud?</summary><p>No. The product direction is local processing on your computer, which is better for private videos.</p></details>
+        <details><summary>Can I batch convert many iPhone videos?</summary><p>Yes. The converter screen is designed for multiple files with a compact queue and one-click conversion.</p></details>
+        <details><summary>Does Unblock work with 4K videos?</summary><p>Yes. 4K is supported, with an optional smaller-file preset for sharing.</p></details>
+        <details><summary>Is this better than installing a codec?</summary><p>Installing a codec may only fix playback on one PC. Converting to MP4 makes the file easier to share, import, and use elsewhere.</p></details>
+      </div>
+    </section>
+
+    <section id="download" class="section">
+      <div class="download-panel">
+        <div>
+          <strong>Windows app packaging comes next</strong>
+          <span>The landing page is ready for a download target. The installer should point here after the Tauri/FFmpeg desktop build exists.</span>
+        </div>
+        <a class="button secondary" href="#top" aria-label="Return to video drop zone">Try the preview</a>
+      </div>
+    </section>
+
     <footer>
       <span>Unblock by sanacode</span>
       <span>lower the cost of understanding</span>
     </footer>
   </div>
+
+  <script>
+    const dropZone = document.querySelector("#dropZone");
+    const input = document.querySelector("#fileInput");
+    const converter = document.querySelector("#converter");
+    const converterTitle = document.querySelector("#converterTitle");
+    const converterSummary = document.querySelector("#converterSummary");
+    const convertButton = document.querySelector("#convertButton");
+    const fileList = document.querySelector("#fileList");
+    let queuedFiles = [];
+    let activeTimer = null;
+
+    function formatSize(bytes) {
+      if (!bytes) return "Size unknown";
+      const units = ["B", "KB", "MB", "GB"];
+      let size = bytes;
+      let unit = 0;
+      while (size >= 1024 && unit < units.length - 1) {
+        size /= 1024;
+        unit += 1;
+      }
+      return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[character]));
+    }
+
+    function guessIssues(file) {
+      const name = file.name.toLowerCase();
+      const issues = [];
+      if (name.endsWith(".mov")) issues.push("iPhone video format");
+      if (name.includes("hevc") || name.includes("h265") || name.endsWith(".mov")) issues.push("May not open on Windows");
+      if (name.includes("hdr") || name.includes("dolby")) issues.push("May look washed out");
+      if (file.size > 700 * 1024 * 1024 || name.includes("4k")) issues.push("Too large to share");
+      return issues.length ? issues : ["Compatibility check"];
+    }
+
+    function outputName(file) {
+      return file.name.replace(/\.[^.]+$/, "") + "_unblock.mp4";
+    }
+
+    function setQueueState(title, summary, disabled) {
+      converterTitle.textContent = title;
+      converterSummary.textContent = summary;
+      convertButton.disabled = disabled;
+    }
+
+    function addFiles(files) {
+      const videos = Array.from(files).filter(file => file.type.startsWith("video/") || /\.(mov|mp4|m4v)$/i.test(file.name));
+      if (!videos.length) return;
+
+      if (activeTimer) {
+        clearInterval(activeTimer);
+        activeTimer = null;
+      }
+
+      queuedFiles = videos;
+      converter.classList.add("visible");
+      fileList.innerHTML = "";
+      setQueueState("Ready to convert", "Unblock selected MP4 · H.264 · AAC · SDR automatically.", false);
+
+      queuedFiles.forEach((file, index) => {
+        const issues = guessIssues(file);
+        const row = document.createElement("div");
+        row.className = "file-row";
+        row.dataset.index = index;
+        row.innerHTML = `
+          <div class="thumb">MP4</div>
+          <div class="file-main">
+            <div class="file-name">${escapeHtml(file.name)}</div>
+            <div class="file-meta">
+              <span class="meta-chip">Detected: ${escapeHtml(issues.join(" + "))}</span>
+              <span class="meta-chip">Output: MP4 · H.264 · SDR</span>
+              <span class="meta-chip">Estimated: ${formatSize(Math.round(file.size * 0.72))}</span>
+              <span class="meta-chip">Saves as: ${escapeHtml(outputName(file))}</span>
+            </div>
+          </div>
+          <div class="ready" role="status">Ready</div>
+          <div class="progress" aria-label="Conversion progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar">
+            <div class="progress-bar"></div>
+          </div>
+        `;
+        fileList.appendChild(row);
+      });
+
+      converter.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function simulateConversion() {
+      if (!queuedFiles.length || activeTimer) return;
+
+      let progress = 0;
+      const rows = Array.from(fileList.querySelectorAll(".file-row"));
+      setQueueState("Creating Windows-friendly MP4...", "Fast mode is selected when a safe rewrap is enough; otherwise Unblock converts to H.264.", true);
+
+      rows.forEach(row => {
+        const status = row.querySelector(".ready");
+        status.textContent = "Queued";
+        status.className = "ready converting";
+      });
+
+      activeTimer = setInterval(() => {
+        progress = Math.min(progress + 8, 100);
+        rows.forEach((row, index) => {
+          const localProgress = Math.max(0, Math.min(progress - index * 12, 100));
+          const status = row.querySelector(".ready");
+          const progressEl = row.querySelector(".progress");
+          row.querySelector(".progress-bar").style.width = `${localProgress}%`;
+          progressEl.setAttribute("aria-valuenow", String(localProgress));
+
+          if (localProgress === 0) {
+            status.textContent = "Queued";
+          } else if (localProgress < 100) {
+            status.textContent = "Converting";
+          } else {
+            status.textContent = "Done";
+            status.className = "ready done";
+          }
+        });
+
+        const complete = rows.every(row => row.querySelector(".progress").getAttribute("aria-valuenow") === "100");
+        if (complete) {
+          clearInterval(activeTimer);
+          activeTimer = null;
+          setQueueState("Your MP4 is ready", "The original video stays untouched. The desktop app will open the output folder after conversion.", false);
+          convertButton.textContent = "Convert again";
+        }
+      }, 220);
+    }
+
+    input.addEventListener("change", event => addFiles(event.target.files));
+    convertButton.addEventListener("click", simulateConversion);
+
+    ["dragenter", "dragover"].forEach(eventName => {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.add("dragging");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(eventName => {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.remove("dragging");
+      });
+    });
+
+    dropZone.addEventListener("drop", event => addFiles(event.dataTransfer.files));
+  </script>
 </body>
 </html>

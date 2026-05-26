@@ -1,0 +1,161 @@
+---
+import Converter from "./Converter";
+import { faqs } from "../data/site";
+
+interface Props {
+  showHero?: boolean;
+}
+
+const { showHero = true } = Astro.props;
+---
+
+{showHero && (
+  <main id="top" class="hero">
+    <div class="tag"><small>New</small> iPhone video compatibility</div>
+    <h1>Drop videos. <span class="grad">Get MP4.</span></h1>
+    <p class="subtitle">
+      Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files - without opening a single setting.
+    </p>
+
+    <Converter client:load />
+  </main>
+)}
+
+<div id="how" class="steps-label">{showHero ? "Why it feels simple" : "How Unblock helps"}</div>
+<section class="steps" aria-label="How Unblock works">
+  <div class="step">
+    <div class="step-num">1</div>
+    <strong>Add iPhone videos</strong>
+    <span>Drop files from your iPhone, iCloud, or PC.</span>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <strong>Unblock decides</strong>
+    <span>Codec, color, and format choices are handled automatically.</span>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <strong>Use on Windows</strong>
+    <span>Export MP4 files that open in Windows apps and editors.</span>
+  </div>
+</section>
+
+<section class="section problem-grid">
+  <div class="section-head">
+    <div class="eyebrow">Plain English Fix</div>
+    <h2>Why iPhone videos break on Windows</h2>
+    <p class="section-copy">
+      iPhone videos can be perfectly fine and still fail on a PC. The problem is usually the format Windows apps expect, not the video itself.
+    </p>
+  </div>
+
+  <div class="problem-list">
+    <div class="problem-item"><span class="bullet"></span><span><b>MOV files</b> are common on iPhone, but many Windows workflows expect MP4.</span></div>
+    <div class="problem-item"><span class="bullet"></span><span><b>HEVC / H.265</b> can trigger missing codec errors on Windows.</span></div>
+    <div class="problem-item"><span class="bullet"></span><span><b>HDR video</b> may look washed out or too bright on normal displays.</span></div>
+    <div class="problem-item"><span class="bullet"></span><span><b>Large 4K files</b> can be slow to send, upload, or import into editors.</span></div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="section-head">
+    <div class="eyebrow">Automatic Compatibility</div>
+    <h2>Unblock fixes the compatibility automatically</h2>
+    <p class="section-copy">No codec hunting, no export menus, and no risk of overwriting the original file.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="card-icon">1</div><strong>Converts MOV to MP4</strong><span>Turns iPhone video files into the container Windows apps expect.</span></div>
+    <div class="card"><div class="card-icon">2</div><strong>Changes HEVC to H.264</strong><span>Creates a video stream that opens reliably on Windows 10 and 11.</span></div>
+    <div class="card"><div class="card-icon">3</div><strong>Fixes HDR for normal displays</strong><span>Outputs SDR MP4 files so colors look natural in everyday apps.</span></div>
+    <div class="card"><div class="card-icon">4</div><strong>Optimizes file size</strong><span>Keeps the file practical for sharing without making settings your problem.</span></div>
+    <div class="card"><div class="card-icon">5</div><strong>Keeps the original untouched</strong><span>Your source video stays exactly where it is, unchanged.</span></div>
+    <div class="card"><div class="card-icon">6</div><strong>Works locally on your computer</strong><span>Private videos do not need to be uploaded to a cloud converter.</span></div>
+  </div>
+</section>
+
+<section id="apps" class="section problem-grid">
+  <div>
+    <div class="section-head">
+      <div class="eyebrow">Windows Apps</div>
+      <h2>Made for the Windows apps people actually use</h2>
+      <p class="section-copy">
+        Export files for Windows Media Player, Photos, PowerPoint, Premiere Pro, DaVinci Resolve, Google Drive, email, Discord, Slack, Teams, USB drives, and external storage.
+      </p>
+    </div>
+    <div class="trust-pills" style="justify-content:flex-start;margin-left:0">
+      <span class="trust-pill strong">Media Player</span>
+      <span class="trust-pill">Photos</span>
+      <span class="trust-pill">PowerPoint</span>
+      <span class="trust-pill">Premiere Pro</span>
+      <span class="trust-pill">DaVinci Resolve</span>
+      <span class="trust-pill">Drive / email</span>
+    </div>
+  </div>
+
+  <div class="app-preview" aria-label="Converter app preview">
+    <div class="app-bar">
+      <div class="app-dots"><span></span><span></span><span></span></div>
+      <span>Unblock by sanacode</span>
+    </div>
+    <div class="app-body">
+      <div class="mini-row">
+        <div class="mini-thumb"></div>
+        <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+        <div class="mini-status">Ready</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-thumb"></div>
+        <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+        <div class="mini-status">HDR → SDR</div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-thumb"></div>
+        <div><div class="mini-title"></div><div class="mini-sub"></div></div>
+        <div class="mini-status">MP4</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">The old way vs Unblock</div>
+    <h2>No codec hunting. No confusing export menus.</h2>
+  </div>
+
+  <div class="compare" role="table" aria-label="Comparison between old workflow and Unblock">
+    <div class="compare-row" role="row"><div class="compare-cell" role="columnheader">Old way</div><div class="compare-cell" role="columnheader">Unblock</div></div>
+    <div class="compare-row" role="row"><div class="compare-cell">Search for missing codecs</div><div class="compare-cell">Drop video</div></div>
+    <div class="compare-row" role="row"><div class="compare-cell">Learn MOV vs MP4</div><div class="compare-cell">Auto-detect</div></div>
+    <div class="compare-row" role="row"><div class="compare-cell">Choose bitrate and codec</div><div class="compare-cell">Best settings selected</div></div>
+    <div class="compare-row" role="row"><div class="compare-cell">Risk overwriting files</div><div class="compare-cell">Original stays untouched</div></div>
+    <div class="compare-row" role="row"><div class="compare-cell">Upload private videos online</div><div class="compare-cell">Process locally</div></div>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="section-head">
+    <div class="eyebrow">FAQ</div>
+    <h2>iPhone video compatibility questions</h2>
+  </div>
+
+  <div class="faq">
+    {faqs.map((item) => (
+      <details>
+        <summary>{item.question}</summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </div>
+</section>
+
+<section id="download" class="section">
+  <div class="download-panel">
+    <div>
+      <strong>Conversion worker comes next</strong>
+      <span>The web app shell is ready for ffmpeg.wasm, WebCodecs fallback, and the worker queue behind this upload flow.</span>
+    </div>
+    <a class="button secondary" href="#top" aria-label="Return to video drop zone">Try the preview</a>
+  </div>
+</section>

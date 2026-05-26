@@ -1,0 +1,27 @@
+---
+import HomeContent from "../components/HomeContent.astro";
+import { requiredPages } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+  return requiredPages.map((page) => ({
+    params: { slug: page.slug },
+    props: { page }
+  }));
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description} path={`/${page.slug}/`} faqJsonLd={page.slug === "faq"}>
+  <main class="hero">
+    <div class="tag"><small>Fix</small> iPhone video compatibility</div>
+    <h1>{page.h1}</h1>
+    <p class="subtitle">{page.description}</p>
+    <div class="hero-actions">
+      <a class="button primary" href="/unblock/#top">Choose a file</a>
+      <a class="button secondary" href="/unblock/#features">See what Unblock fixes</a>
+    </div>
+  </main>
+  <HomeContent showHero={false} />
+</BaseLayout>
