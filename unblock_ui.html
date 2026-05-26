@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unblock by sanacode</title>
+  <style>
+    :root {
+      --bg: #03050b;
+      --panel: rgba(13, 16, 29, 0.86);
+      --panel-2: rgba(255, 255, 255, 0.035);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f7f7fb;
+      --muted: #8c91a6;
+      --muted-2: #5e6377;
+      --violet: #8b5cf6;
+      --blue: #3b82f6;
+      --cyan: #38bdf8;
+      --green: #22c55e;
+      --radius: 30px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.34), transparent 30%),
+        radial-gradient(circle at 86% 78%, rgba(14, 165, 233, 0.28), transparent 30%),
+        linear-gradient(180deg, #03050b 0%, #050713 54%, #02030a 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at 50% 30%, black, transparent 72%);
+    }
+
+    .page {
+      position: relative;
+      width: min(1120px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 34px 0 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 86px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--violet), var(--blue));
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      box-shadow: 0 0 26px rgba(139,92,246,0.48);
+    }
+
+    .version {
+      color: var(--muted-2);
+      font-size: 12px;
+      margin-left: 8px;
+      font-weight: 700;
+    }
+
+    nav {
+      display: flex;
+      gap: 34px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 14px rgba(34,197,94,0.9);
+    }
+
+    .hero { text-align: center; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #a9a1ff;
+      background: rgba(139,92,246,0.11);
+      border: 1px solid rgba(139,92,246,0.22);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 750;
+      margin-bottom: 22px;
+      box-shadow: 0 0 34px rgba(139,92,246,0.12);
+    }
+
+    .tag small {
+      color: #ddd6fe;
+      background: rgba(139,92,246,0.26);
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: clamp(54px, 8vw, 88px);
+      line-height: 0.94;
+      letter-spacing: -0.085em;
+      font-weight: 900;
+      position: relative;
+    }
+
+    h1::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -48%);
+      width: 112%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(139,92,246,0.34), rgba(59,130,246,0.12) 42%, transparent 72%);
+      filter: blur(42px);
+      z-index: -1;
+    }
+
+    .grad {
+      background: linear-gradient(90deg, #ffffff 0%, #c4b5fd 46%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      max-width: 590px;
+      margin: 24px auto 32px;
+      color: #9ca3af;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .drop-card {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 2px;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03)),
+        linear-gradient(135deg, rgba(139,92,246,0.28), rgba(59,130,246,0.2));
+      box-shadow:
+        0 40px 110px rgba(0,0,0,0.52),
+        0 0 80px rgba(59,130,246,0.12);
+    }
+
+    .drop {
+      min-height: 260px;
+      border-radius: calc(var(--radius) - 2px);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(139,92,246,0.14), transparent 44%),
+        radial-gradient(circle at 88% 100%, rgba(14,165,233,0.18), transparent 42%),
+        rgba(8, 10, 20, 0.92);
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      border: 1px solid rgba(255,255,255,0.035);
+    }
+
+    .drop-inner { text-align: center; }
+
+    .upload {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 20px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      color: #ddd6fe;
+      font-size: 30px;
+      background: rgba(139,92,246,0.11);
+      border: 1px solid rgba(139,92,246,0.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 30px rgba(139,92,246,0.24);
+    }
+
+    .drop h2 {
+      margin: 0 0 10px;
+      font-size: 23px;
+      letter-spacing: -0.045em;
+    }
+
+    .drop p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .choose {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, var(--violet), var(--blue));
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 12px 32px rgba(124,58,237,0.3);
+    }
+
+    .presets {
+      margin: 24px auto 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .preset {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.035);
+      border-radius: 999px;
+      padding: 9px 13px;
+    }
+
+    .preset.active {
+      color: #ddd6fe;
+      border-color: rgba(139,92,246,0.42);
+      background: rgba(139,92,246,0.16);
+    }
+
+    .steps-label {
+      margin: 78px 0 22px;
+      color: var(--muted-2);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .step {
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      min-height: 150px;
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(139,92,246,0.16);
+      color: #c4b5fd;
+      font-weight: 850;
+      margin-bottom: 18px;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: -0.03em;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    footer {
+      margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted-2);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    @media (max-width: 780px) {
+      header { margin-bottom: 54px; }
+      nav { display: none; }
+      .status { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo">U</div>
+        <span>Unblock</span>
+        <span class="version">v1.0</span>
+      </div>
+
+      <nav>
+        <span>How it works</span>
+        <span>Features</span>
+        <span>Pricing</span>
+        <span>Changelog</span>
+      </nav>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        Windows ready
+      </div>
+    </header>
+
+    <main class="hero">
+      <div class="tag"><small>New</small> iPhone video compatibility</div>
+      <h1>Drop videos. <span class="grad">Get MP4.</span></h1>
+      <p class="subtitle">
+        Unblock converts iPhone MOV, HEVC, HDR, and 4K videos into Windows-friendly MP4 files — without opening a single setting.
+      </p>
+
+      <section class="drop-card">
+        <div class="drop">
+          <div class="drop-inner">
+            <div class="upload">↥</div>
+            <h2>Drop iPhone videos here</h2>
+            <p>MOV · HEVC · HDR · 4K · local processing</p>
+            <button class="choose">Choose a file</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="presets">
+        <span class="preset active">Windows MP4</span>
+        <span class="preset">PowerPoint</span>
+        <span class="preset">Premiere Pro</span>
+        <span class="preset">Smaller file</span>
+      </div>
+    </main>
+
+    <div class="steps-label">Why it feels simple</div>
+    <section class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <strong>Add iPhone videos</strong>
+        <span>Drop files from your iPhone, iCloud, or PC.</span>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <strong>Unblock decides</strong>
+        <span>Codec, color, and format choices are handled automatically.</span>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <strong>Use on Windows</strong>
+        <span>Export MP4 files that open in Windows apps and editors.</span>
+      </div>
+    </section>
+
+    <footer>
+      <span>Unblock by sanacode</span>
+      <span>lower the cost of understanding</span>
+    </footer>
+  </div>
+</body>
+</html>
