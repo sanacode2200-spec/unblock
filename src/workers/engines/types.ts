@@ -1,6 +1,8 @@
 import type { QueueFile, WorkerResponse } from "../../lib/conversionMessages";
 
-export type EngineFile = Pick<QueueFile, "id" | "name" | "size" | "type" | "issues" | "plan">;
+export type EngineFile = Pick<QueueFile, "id" | "name" | "size" | "type" | "issues" | "plan"> & {
+  source: File;
+};
 
 export type EngineContext = {
   post: (message: WorkerResponse) => void;

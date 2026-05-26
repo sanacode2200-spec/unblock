@@ -1,8 +1,19 @@
 import type { ConversionEngine, EngineContext, EngineFile } from "./types";
 
-function commandFor(file: EngineFile) {
-  const outputName = file.name.replace(/\.[^.]+$/, "") + "_unblock.mp4";
-  const args = ["-i", file.name];
+let ffmpegPromise: Promise<import("@ffmpeg/ffmpeg").FFmpeg> | null = null;
+let activeFileId: string | null = null;
+
+function safeInputName(file: EngineFile) {
+  const extension = file.name.match(/\.[^.]+$/)?.[0] ?? ".mov";
+  return `input_${file.id.replace(/[^a-z0-9]/gi, "_")}${extension}`;
+}
+
+function outputNameFor(file: EngineFile) {
+  return file.name.replace(/\.[^.]+$/, "") + "_unblock.mp4";
+}
+
+function commandFor(file: EngineFile, inputName: string, outputName: string) {
+  const args = ["-i", inputName];
 
   if (file.plan.actions.includes("rewrap") && file.plan.actions.length === 1) {
     args.push("-c", "copy", "-movflags", "+faststart", outputName);
@@ -25,16 +36,80 @@ function commandFor(file: EngineFile) {
   return { args, outputName };
 }
 
+async function getFFmpeg(context: EngineContext) {
+  if (ffmpegPromise) return ffmpegPromise;
+
+  ffmpegPromise = (async () => {
+    const { FFmpeg } = await import("@ffmpeg/ffmpeg");
+    const ffmpeg = new FFmpeg();
+
+    ffmpeg.on("progress", ({ progress }) => {
+      if (!activeFileId) return;
+      context.post({
+        type: "progress",
+        id: activeFileId,
+        progress: Math.max(1, Math.min(Math.round(progress * 100), 99)),
+        status: "Converting"
+      });
+    });
+
+    await ffmpeg.load({
+      coreURL: new URL("@ffmpeg/core", import.meta.url).toString(),
+      wasmURL: new URL("@ffmpeg/core/wasm", import.meta.url).toString()
+    });
+
+    return ffmpeg;
+  })();
+
+  return ffmpegPromise;
+}
+
 export const ffmpegEngine: ConversionEngine = {
   name: "ffmpeg",
   async convert(files: EngineFile[], context: EngineContext) {
+    const { fetchFile } = await import("@ffmpeg/util");
+    const ffmpeg = await getFFmpeg(context);
+
     for (const file of files) {
-      const plan = commandFor(file);
+      const inputName = safeInputName(file);
+      const outputName = outputNameFor(file);
+      const plan = commandFor(file, inputName, outputName);
+
       context.post({
-        type: "error",
+        type: "progress",
         id: file.id,
-        message: `FFmpeg engine is wired next. Planned command: ffmpeg ${plan.args.join(" ")}`
+        progress: 1,
+        status: "Analyzing",
+        message: "Preparing local conversion"
       });
+
+      await ffmpeg.writeFile(inputName, await fetchFile(file.source));
+
+      activeFileId = file.id;
+      const exitCode = await ffmpeg.exec(plan.args).finally(() => {
+        activeFileId = null;
+      });
+      if (exitCode !== 0) {
+        throw new Error("This video could not be converted. The file may be damaged or unsupported.");
+      }
+
+      const data = await ffmpeg.readFile(outputName);
+      const bytes = typeof data === "string" ? new TextEncoder().encode(data) : data;
+      const outputBytes = new Uint8Array(bytes.byteLength);
+      outputBytes.set(bytes);
+
+      context.post({
+        type: "result",
+        id: file.id,
+        fileName: outputName,
+        blob: new Blob([outputBytes.buffer], { type: "video/mp4" })
+      });
+      context.post({ type: "progress", id: file.id, progress: 100, status: "Done", message: "Ready" });
+
+      await Promise.allSettled([
+        ffmpeg.deleteFile(inputName),
+        ffmpeg.deleteFile(outputName)
+      ]);
     }
   }
 };

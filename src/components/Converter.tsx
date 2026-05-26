@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { buildConversionPlan, presetLabel } from "../lib/conversionPlan";
 import type { ConversionIssue, ConversionPreset, QueueFile, WorkerResponse } from "../lib/conversionMessages";
 
@@ -32,11 +32,18 @@ function outputName(name: string) {
 
 const presets: ConversionPreset[] = ["windows-mp4", "powerpoint", "editor-safe", "smaller-file"];
 
+type OutputFile = {
+  fileName: string;
+  url: string;
+};
+
 export default function Converter() {
   const inputRef = useRef<HTMLInputElement>(null);
   const workerRef = useRef<Worker | null>(null);
+  const selectedFilesRef = useRef<Map<string, File>>(new Map());
   const [dragging, setDragging] = useState(false);
   const [files, setFiles] = useState<QueueFile[]>([]);
+  const [outputs, setOutputs] = useState<Record<string, OutputFile>>({});
   const [title, setTitle] = useState("Ready to convert");
   const [summary, setSummary] = useState("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
   const [running, setRunning] = useState(false);
@@ -49,6 +56,10 @@ export default function Converter() {
     if (files.every((file) => file.status === "Done") && hasFiles) return "Convert again";
     return "Convert to MP4";
   }, [files, hasFiles, running]);
+
+  useEffect(() => () => {
+    workerRef.current?.terminate();
+  }, []);
 
   function ensureWorker() {
     if (workerRef.current) return workerRef.current;
@@ -75,6 +86,20 @@ export default function Converter() {
         setRunning(false);
         setTitle("Your MP4 is ready");
         setSummary("The original video stays untouched. Download output will connect to the ffmpeg.wasm result next.");
+        return;
+      }
+      if (message.type === "result") {
+        const url = URL.createObjectURL(message.blob);
+        setOutputs((current) => {
+          if (current[message.id]) URL.revokeObjectURL(current[message.id].url);
+          return {
+            ...current,
+            [message.id]: {
+              fileName: message.fileName,
+              url
+            }
+          };
+        });
         return;
       }
       if (message.type === "error") {
@@ -118,10 +143,13 @@ export default function Converter() {
     if (!videos.length) return;
 
     ensureWorker();
-    setFiles(videos.map((file) => {
+    const selectedFiles = new Map<string, File>();
+    const queue: QueueFile[] = videos.map((file) => {
       const issues = guessIssues(file);
+      const id = `${file.name}-${file.size}-${file.lastModified}`;
+      selectedFiles.set(id, file);
       return {
-        id: `${file.name}-${file.size}-${file.lastModified}`,
+        id,
         name: file.name,
         size: file.size,
         type: file.type,
@@ -133,9 +161,16 @@ export default function Converter() {
           preset
         }),
         progress: 0,
-        status: "Ready"
+        status: "Ready" as const
       };
-    }));
+    });
+
+    selectedFilesRef.current = selectedFiles;
+    setOutputs((current) => {
+      Object.values(current).forEach((output) => URL.revokeObjectURL(output.url));
+      return {};
+    });
+    setFiles(queue);
     setTitle("Ready to convert");
     setSummary("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
     setRunning(false);
@@ -154,7 +189,10 @@ export default function Converter() {
     worker.postMessage({
       type: "convert",
       preset,
-      files: files.map(({ id, name, size, type, issues, plan }) => ({ id, name, size, type, issues, plan }))
+      files: files.flatMap(({ id, name, size, type, issues, plan }) => {
+        const source = selectedFilesRef.current.get(id);
+        return source ? [{ id, name, size, type, issues, plan, source }] : [];
+      })
     });
   }
 
@@ -253,7 +291,9 @@ export default function Converter() {
                   </div>
                 </div>
                 <div className={`ready${["Queued", "Analyzing", "Rewrapping", "Converting"].includes(file.status) ? " converting" : ""}${file.status === "Done" ? " done" : ""}`} role="status">
-                  {file.status}
+                  {outputs[file.id] ? (
+                    <a href={outputs[file.id].url} download={outputs[file.id].fileName}>Download</a>
+                  ) : file.status}
                 </div>
                 <div
                   className="progress"

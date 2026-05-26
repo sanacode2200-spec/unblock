@@ -5,5 +5,10 @@ export default defineConfig({
   site: "https://sanacode.com",
   base: "/unblock",
   integrations: [react()],
-  output: "static"
+  output: "static",
+  vite: {
+    worker: {
+      format: "es"
+    }
+  }
 });

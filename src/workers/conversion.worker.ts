@@ -1,4 +1,5 @@
 import type { WorkerRequest, WorkerResponse } from "../lib/conversionMessages";
+import { ffmpegEngine } from "./engines/ffmpegEngine";
 import { simulatedEngine } from "./engines/simulatedEngine";
 
 type ConversionWorkerScope = typeof globalThis & {
@@ -22,19 +23,23 @@ function post(message: WorkerResponse) {
 post({
   type: "capabilities",
   webCodecs: Boolean(workerScope.VideoEncoder && workerScope.VideoDecoder),
-  crossOriginIsolated: workerScope.crossOriginIsolated
+  crossOriginIsolated: workerScope.crossOriginIsolated,
+  engine: workerScope.crossOriginIsolated ? "ffmpeg" : "simulated"
 });
 
 workerScope.addEventListener("message", async (event: MessageEvent<WorkerRequest>) => {
   if (event.data.type !== "convert") return;
 
   try {
-    await simulatedEngine.convert(event.data.files, { post });
+    const engine = workerScope.crossOriginIsolated ? ffmpegEngine : simulatedEngine;
+    await engine.convert(event.data.files, { post });
     post({ type: "complete" });
-  } catch {
+  } catch (error) {
     post({
       type: "error",
-      message: "This video could not be converted. The file may be damaged or unsupported."
+      message: error instanceof Error
+        ? error.message
+        : "This video could not be converted. The file may be damaged or unsupported."
     });
   }
 });

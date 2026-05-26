@@ -32,7 +32,9 @@ export type WorkerRequest =
   | {
       type: "convert";
       preset: ConversionPreset;
-      files: Array<Pick<QueueFile, "id" | "name" | "size" | "type" | "issues" | "plan">>;
+      files: Array<Pick<QueueFile, "id" | "name" | "size" | "type" | "issues" | "plan"> & {
+        source: File;
+      }>;
     };
 
 export type WorkerResponse =
@@ -40,6 +42,7 @@ export type WorkerResponse =
       type: "capabilities";
       webCodecs: boolean;
       crossOriginIsolated: boolean;
+      engine: "ffmpeg" | "simulated";
     }
   | {
       type: "progress";
@@ -50,6 +53,12 @@ export type WorkerResponse =
     }
   | {
       type: "complete";
+    }
+  | {
+      type: "result";
+      id: string;
+      fileName: string;
+      blob: Blob;
     }
   | {
       type: "error";
