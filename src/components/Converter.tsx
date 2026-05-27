@@ -198,11 +198,6 @@ export default function Converter() {
 
   return (
     <>
-      <div className="hero-actions">
-        <label className="button primary" htmlFor="fileInput">Choose a file</label>
-        <a className="button secondary" href="#download">Download for Windows</a>
-      </div>
-
       <section className="drop-card" aria-label="Video upload">
         <div
           className={`drop${dragging ? " dragging" : ""}`}
