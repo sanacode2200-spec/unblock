@@ -31,6 +31,7 @@ function outputName(name: string) {
 }
 
 const presets: ConversionPreset[] = ["windows-mp4", "powerpoint", "editor-safe", "smaller-file"];
+const activeStatuses: QueueFile["status"][] = ["Queued", "Analyzing", "Rewrapping", "Converting"];
 
 type OutputFile = {
   fileName: string;
@@ -85,7 +86,7 @@ export default function Converter() {
       if (message.type === "complete") {
         setRunning(false);
         setTitle("Your MP4 is ready");
-        setSummary("The original video stays untouched. Download output will connect to the ffmpeg.wasm result next.");
+        setSummary("The original video stayed untouched. Download the converted MP4 from the file row.");
         return;
       }
       if (message.type === "result") {
@@ -118,6 +119,10 @@ export default function Converter() {
     return worker;
   }
 
+  function preloadWorker() {
+    ensureWorker().postMessage({ type: "preload" });
+  }
+
   function applyPreset(nextPreset: ConversionPreset) {
     setPreset(nextPreset);
     setFiles((current) => current.map((file) => ({
@@ -142,7 +147,7 @@ export default function Converter() {
     ));
     if (!videos.length) return;
 
-    ensureWorker();
+    preloadWorker();
     const selectedFiles = new Map<string, File>();
     const queue: QueueFile[] = videos.map((file) => {
       const issues = guessIssues(file);
@@ -161,7 +166,7 @@ export default function Converter() {
           preset
         }),
         progress: 0,
-        status: "Ready" as const
+        status: "Uploaded" as const
       };
     });
 
@@ -171,8 +176,8 @@ export default function Converter() {
       return {};
     });
     setFiles(queue);
-    setTitle("Ready to convert");
-    setSummary("Unblock selected MP4 · H.264 · AAC · SDR automatically.");
+    setTitle(`${queue.length} video${queue.length === 1 ? "" : "s"} uploaded`);
+    setSummary("Ready for local conversion. Review the output plan, then start the MP4 conversion.");
     setRunning(false);
   }
 
@@ -273,11 +278,12 @@ export default function Converter() {
           </div>
           <div className="file-list">
             {files.map((file) => (
-              <div className="file-row" key={file.name}>
-                <div className="thumb">MP4</div>
+              <div className={`file-row${file.status === "Uploaded" ? " uploaded" : ""}`} key={file.id}>
+                <div className="thumb">{file.status === "Uploaded" ? "OK" : "MP4"}</div>
                 <div className="file-main">
                   <div className="file-name">{file.name}</div>
                   <div className="file-meta">
+                    <span className="meta-chip uploaded-chip">Uploaded · {formatSize(file.size)}</span>
                     <span className="meta-chip">Detected: {file.issues.join(" + ")}</span>
                     <span className="meta-chip">Plan: {file.plan.userLabel}</span>
                     <span className="meta-chip">Output: {file.plan.outputLabel}</span>
@@ -285,7 +291,7 @@ export default function Converter() {
                     <span className="meta-chip">Saves as: {outputName(file.name)}</span>
                   </div>
                 </div>
-                <div className={`ready${["Queued", "Analyzing", "Rewrapping", "Converting"].includes(file.status) ? " converting" : ""}${file.status === "Done" ? " done" : ""}`} role="status">
+                <div className={`ready${activeStatuses.includes(file.status) ? " converting" : ""}${file.status === "Done" ? " done" : ""}${file.status === "Uploaded" ? " uploaded" : ""}${file.status === "Error" ? " error" : ""}`} role="status">
                   {outputs[file.id] ? (
                     <a href={outputs[file.id].url} download={outputs[file.id].fileName}>Download</a>
                   ) : file.status}
@@ -304,7 +310,7 @@ export default function Converter() {
             ))}
           </div>
           <p className="converter-note">
-            Prototype mode: this web app shell previews the queue, plain-language analysis, and progress states. The conversion worker will connect here next.
+            Files are processed locally in this browser tab. Keep the page open until the download link appears.
           </p>
         </section>
       )}

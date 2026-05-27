@@ -13,7 +13,7 @@ export type QueueFile = {
   issues: ConversionIssue[];
   plan: ConversionPlan;
   progress: number;
-  status: "Ready" | "Queued" | "Analyzing" | "Rewrapping" | "Converting" | "Done" | "Error";
+  status: "Uploaded" | "Ready" | "Queued" | "Analyzing" | "Rewrapping" | "Converting" | "Done" | "Error";
 };
 
 export type ConversionPreset = "windows-mp4" | "powerpoint" | "editor-safe" | "smaller-file";
@@ -29,6 +29,9 @@ export type ConversionPlan = {
 };
 
 export type WorkerRequest =
+  | {
+      type: "preload";
+    }
   | {
       type: "convert";
       preset: ConversionPreset;

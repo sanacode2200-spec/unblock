@@ -1,6 +1,5 @@
 import type { WorkerRequest, WorkerResponse } from "../lib/conversionMessages";
 import { ffmpegEngine } from "./engines/ffmpegEngine";
-import { simulatedEngine } from "./engines/simulatedEngine";
 
 type ConversionWorkerScope = typeof globalThis & {
   postMessage: (message: WorkerResponse) => void;
@@ -24,15 +23,18 @@ post({
   type: "capabilities",
   webCodecs: Boolean(workerScope.VideoEncoder && workerScope.VideoDecoder),
   crossOriginIsolated: workerScope.crossOriginIsolated,
-  engine: workerScope.crossOriginIsolated ? "ffmpeg" : "simulated"
+  engine: "ffmpeg"
 });
 
 workerScope.addEventListener("message", async (event: MessageEvent<WorkerRequest>) => {
-  if (event.data.type !== "convert") return;
-
   try {
-    const engine = workerScope.crossOriginIsolated ? ffmpegEngine : simulatedEngine;
-    await engine.convert(event.data.files, { post });
+    if (event.data.type === "preload") {
+      await ffmpegEngine.preload?.({ post });
+      return;
+    }
+    if (event.data.type !== "convert") return;
+
+    await ffmpegEngine.convert(event.data.files, { post });
     post({ type: "complete" });
   } catch (error) {
     post({

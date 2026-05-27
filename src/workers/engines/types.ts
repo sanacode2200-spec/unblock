@@ -10,5 +10,6 @@ export type EngineContext = {
 
 export type ConversionEngine = {
   name: string;
+  preload?: (context: EngineContext) => Promise<void>;
   convert: (files: EngineFile[], context: EngineContext) => Promise<void>;
 };
